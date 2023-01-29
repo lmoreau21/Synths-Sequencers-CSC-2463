@@ -1,5 +1,5 @@
 let synth;
-let notes = ['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5'];
+let notes = ['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','A#3','C#4','D#4','F#4','G#4','A#4'];
 let slider;
 let sel;
 let length;
@@ -53,7 +53,7 @@ function draw(){
   textSize(25);
   text("Note Length: "+slider.value(), width/2, 50)
   text("Oscillator Type",width/4+20,150)
-  text("Press a key on the middle a row \n(a: A3; l: C4)", width / 2, height / 2);
+  text("Press a key on the middle a row \n(a-A3; ;-C4)", width / 2, height / 2);
   text("Envelope",width*3/4-30,150)
   textSize(16);
   text('attack', width*3/4-100, 200);
@@ -73,14 +73,23 @@ function keyPressed() {
     case 'a':
       synth.triggerAttackRelease(notes[0],length);
       break;
+    case 'w':
+      synth.triggerAttackRelease(notes[10],length);
+      break;
     case 's':
       synth.triggerAttackRelease(notes[1],length);
       break;
     case 'd':
       synth.triggerAttackRelease(notes[2],length);
       break;
+    case 'r':
+      synth.triggerAttackRelease(notes[11],length);
+      break;
     case 'f':
       synth.triggerAttackRelease(notes[3],length);
+      break;
+    case 't':
+      synth.triggerAttackRelease(notes[12],length);
       break;
     case 'g':
       synth.triggerAttackRelease(notes[4],length);
@@ -88,18 +97,28 @@ function keyPressed() {
     case 'h':
       synth.triggerAttackRelease(notes[5],length);
       break;
-    case 'i':
-      synth.triggerAttackRelease(notes[6],length);
+    case 'u':
+      synth.triggerAttackRelease(notes[13],length);
       break;
     case 'j':
-      synth.triggerAttackRelease(notes[7],length);
+      synth.triggerAttackRelease(notes[6],length);
+      break;
+    case 'i':
+      synth.triggerAttackRelease(notes[14],length);
       break;
     case 'k':
-      synth.triggerAttackRelease(notes[8],length);
+      synth.triggerAttackRelease(notes[7],length);
+      break;
+    case 'o':
+      synth.triggerAttackRelease(notes[15],length);
       break;
     case 'l':
+      synth.triggerAttackRelease(notes[8],length);
+      break;
+    case ';':
       synth.triggerAttackRelease(notes[9],length);
       break;
+    
   }
 }
 
