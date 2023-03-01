@@ -1,40 +1,67 @@
 let synth;
 let notes = ['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','A#3','C#4','D#4','F#4','G#4','A#4'];
 let slider;
+let harmonS;
 let sel;
 let length;
-let attack;
-let decay;
-let sus;
-let release;
+let attack, decay, sus, release;
+let noise;
+let noiseSel;
 //Tone.Transport.start();
 function setup(){
   createCanvas(windowWidth, windowHeight);
   background('lightblue');
   slider = createSlider(.1,5,.3,.1);
   slider.style('width',width*3/4+'px');
-  slider.position(width - width*7/8, 80)
+  slider.position(width - width*7/8, 170)
+
   sel = createSelect();
-  sel.position(width/4-20, 180);
+  sel.position(width/4-20, 280);
   sel.option('sine');
   sel.option('triangle');
   sel.option('sawtooth');
   sel.option('square');
   sel.selected('sine');
 
+  noiseSel = createSelect();
+  noiseSel.position(width/4-20, 380);
+  noiseSel.option('white');
+  noiseSel.option('pink');
+  noiseSel.option('brown');
+  noiseSel.option('none');
+  noiseSel.selected('none');
+
+  filterSel = createSelect();
+  filterSel.position(width/4-20, 480);
+  filterSel.option('lowpass');
+  filterSel.option('highpass');
+  filterSel.option('bandpass');
+  filterSel.option('lowshelf');
+  filterSel.option('highshelf');
+  filterSel.option('notch');
+  filterSel.option('allpass');
+  filterSel.option('peaking');
+
+  filterSel.selected('lowpass')
 
   attack = createSlider(0, 1, 0.5, 0.01);
-  attack.position(width*3/4-150, 220);
+  attack.position(width*3/4-150, 320);
   decay = createSlider(0, 1, 0.5, 0.01);
-  decay.position(width*3/4, 220);
+  decay.position(width*3/4, 320);
   sus = createSlider(0, 1, 0.5, 0.01);
-  sus.position(width*3/4-150, 290);
+  sus.position(width*3/4-150, 390);
   release = createSlider(0, 1, 0.5, 0.01);
-  release.position(width*3/4, 290);
- 
-
-  synth = new Tone.Synth({
-    harmonicity:5,
+  release.position(width*3/4, 390);
+  
+  noise = new Tone.NoiseSynth({
+    noise:{
+      type: 'white',
+      playbackRate: 0.5
+    }
+    
+  }).toDestination();
+  synth = new Tone.MonoSynth({
+    detune:9,
     oscillator:{
       type:'sine'
     },
@@ -43,33 +70,61 @@ function setup(){
       decay: 0.15,
       sustain: 1,
       release: 5
+    },
+    filter: {
+      Q: 2,
+      type: 'lowpass',
+      rolloff: -12
+    },
+    filterEnvelope: {
+      attack: 0.001,
+      decay: 0.32,
+      sustain: 0.9,
+      release: 3,
+      baseFrequency: 700,
+      octaves: 2.3
     }
-  }).toDestination();
+   }).toDestination();
+
+  
+   
 }
+
 function draw(){
   background('lightblue');
   length = slider.value();
   textAlign(CENTER);
+  textSize(35);
+  text("Synths & Sequences", width/2, 60);
   textSize(25);
-  text("Note Length: "+slider.value(), width/2, 50)
-  text("Oscillator Type",width/4+20,150)
-  text("Press a key on the middle a row \n(a-A3; ;-C4)", width / 2, height / 2);
-  text("Envelope",width*3/4-30,150)
+  text("Note Length: "+slider.value(), width/2, 150)
+  text("Oscillator Type",width/4+20,250)
+  text("Noise Type",width/4+20,350)
+  text("Filter Type",width/4+20,450)
+  text("Press a key\nw:A#3 r:C#3 t:D#3 u:F#3 i:G#3 o:A#3 \na:A3 s:B3 d:C4 f:D4 g:E4 h:F4 j:G4 k:A4 l:B4 ;:C5", width / 2, height / 2+200);
+  text("Envelope",width*3/4-30,250)
   textSize(16);
-  text('attack', width*3/4-100, 200);
-  text('decay', width*3/4+50, 200);
-  text('sustain', width*3/4-100, 270);
-  text('release', width*3/4+50, 270);
-  
+  text('attack: '+attack.value(), width*3/4-100, 300);
+  text('decay: '+decay.value(), width*3/4+50, 300);
+  text('sustain: '+sus.value(), width*3/4-100, 370);
+  text('release: '+release.value(), width*3/4+50, 370);
   synth.oscillator.type = sel.value();
+  //noiseSound.type = noiseSel.value();
   synth.envelope.attack = attack.value();
   synth.envelope.decay = decay.value();
   synth.envelope.sustain = sus.value();
   synth.envelope.release = release.value();
+  synth.filter.type = filterSel.value();
+  if(noiseSel.value()!='none')
+    noise.noise.type = noiseSel.value();
 }
 
 function keyPressed() {
+  //console.log("key pressed")
+  if(noiseSel.value()!='none')
+    noise.triggerAttackRelease(length);
   switch(key.toLowerCase()){
+    
     case 'a':
       synth.triggerAttackRelease(notes[0],length);
       break;
